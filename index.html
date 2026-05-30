@@ -255,52 +255,203 @@
     <hr class="divider">
 
     <!-- ── ROLLBACK ───────────────────────────────────────── -->
+    <div class="rollback-section-outer">
     <section id="rollback" aria-labelledby="rollback-title">
       <p class="section-eyebrow">Auto-Rollback</p>
       <h2 class="section-title pre-reveal" id="rollback-title">No More 2AM Panic Fixes</h2>
       <p class="section-desc pre-reveal">
-        If the health check fails after deploy, the pipeline automatically reverts to the previous
-        release — same services restarted, same health check verified, Slack notified yellow.
-        The whole rollback takes under 30 seconds.
+        Health check fails after deploy? The pipeline automatically restores the previous release,
+        restarts services, verifies recovery, and fires a Slack warning — all in under 30 seconds.
+        Zero manual intervention. Zero downtime extension.
       </p>
 
-      <div class="rollback-visual pre-reveal" role="img" aria-label="Auto-rollback flow">
-<span class="rv-step">━━━ Step 7: VERIFY DEPLOYMENT ━━━</span>
-<span class="rv-dim">[2026-05-30 09:15:47] [VERIFY] Waiting 10s for app to start...</span>
-<span class="rv-dim">[2026-05-30 09:15:57] [VERIFY] Health check attempt 1/3: http://localhost:3000/health</span>
-<span class="rv-warn">[2026-05-30 09:15:58] [VERIFY] Attempt 1: HTTP 503</span>
-<span class="rv-dim">[2026-05-30 09:16:08] [VERIFY] Health check attempt 2/3: http://localhost:3000/health</span>
-<span class="rv-warn">[2026-05-30 09:16:09] [VERIFY] Attempt 2: HTTP 503</span>
-<span class="rv-dim">[2026-05-30 09:16:19] [VERIFY] Health check attempt 3/3: http://localhost:3000/health</span>
-<span class="rv-warn">[2026-05-30 09:16:20] [VERIFY] Attempt 3: HTTP 503</span>
-<span class="rv-fail">[2026-05-30 09:16:20] [VERIFY] FAILED after 3 attempts — triggering auto-rollback</span>
+      <!-- Outcome chips -->
+      <div class="rb-outcomes pre-reveal" role="region" aria-label="Rollback incident outcome">
 
-<span class="rv-step">━━━ AUTO-ROLLBACK ━━━</span>
-<span class="rv-warn">[2026-05-30 09:16:20] [ROLLBACK] Reason: health-check failed</span>
-<span class="rv-warn">[2026-05-30 09:16:20] [ROLLBACK] Restoring: 20260529-143021</span>
-<span class="rv-dim">[2026-05-30 09:16:20] [SWITCH]   /var/www/current → 20260529-143021</span>
-<span class="rv-dim">[2026-05-30 09:16:21] [RESTART]  pm2 reloaded: myapp</span>
-<span class="rv-dim">[2026-05-30 09:16:21] [RESTART]  nginx reloaded</span>
-<span class="rv-dim">[2026-05-30 09:16:31] [ROLLBACK] Health check: HTTP 200</span>
-<span class="rv-step">[OK]  [ROLLBACK] Rollback verified — running 20260529-143021</span>
-<span class="rv-dim">[2026-05-30 09:16:31] [NOTIFY]   Slack notification sent (rollback)</span>
-      </div>
+        <div class="rb-outcome rb-fail">
+          <div class="rb-outcome-accent"></div>
+          <div class="rb-icon" style="color:var(--red)">✕</div>
+          <div class="rb-outcome-tag">
+            <span>●</span> Deploy Failed
+          </div>
+          <div class="rb-outcome-title">Bad Release Detected</div>
+          <div class="rb-outcome-meta">
+            Release: 20260530-091500<br>
+            09:15:47 UTC · 3 health-check failures
+          </div>
+        </div>
 
-      <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">
-        <div style="background:var(--bg-card);border:1px solid var(--border-dim);border-radius:var(--radius-md);padding:16px 20px;flex:1;min-width:200px;">
-          <div style="font-family:var(--font-mono);font-size:11px;color:var(--blue);margin-bottom:6px;">TRIGGER</div>
-          <div style="font-size:13px;color:var(--text-secondary);">Health check returns non-200 after all retries, or any error after symlink switch</div>
+        <div class="rb-outcome rb-detect">
+          <div class="rb-outcome-accent"></div>
+          <div class="rb-icon" style="color:var(--orange)">⚡</div>
+          <div class="rb-outcome-tag">
+            <span>●</span> Auto-Detected
+          </div>
+          <div class="rb-outcome-title">Rollback Triggered</div>
+          <div class="rb-outcome-meta">
+            3 × HTTP 503 · 30s elapsed<br>
+            AUTO_ROLLBACK=true fired
+          </div>
         </div>
-        <div style="background:var(--bg-card);border:1px solid var(--border-dim);border-radius:var(--radius-md);padding:16px 20px;flex:1;min-width:200px;">
-          <div style="font-family:var(--font-mono);font-size:11px;color:var(--emerald);margin-bottom:6px;">MANUAL</div>
-          <div style="font-size:13px;color:var(--text-secondary);font-family:var(--font-mono);">./deploy.sh production --rollback</div>
+
+        <div class="rb-outcome rb-restore">
+          <div class="rb-outcome-accent"></div>
+          <div class="rb-icon" style="color:var(--emerald)">✓</div>
+          <div class="rb-outcome-tag">
+            <span>●</span> Site Restored
+          </div>
+          <div class="rb-outcome-title">Previous Release Live</div>
+          <div class="rb-outcome-meta">
+            Release: 20260529-143021<br>
+            HTTP 200 · &lt; 30s total recovery
+          </div>
         </div>
-        <div style="background:var(--bg-card);border:1px solid var(--border-dim);border-radius:var(--radius-md);padding:16px 20px;flex:1;min-width:200px;">
-          <div style="font-family:var(--font-mono);font-size:11px;color:var(--orange);margin-bottom:6px;">DISABLE</div>
-          <div style="font-size:13px;color:var(--text-secondary);font-family:var(--font-mono);">AUTO_ROLLBACK=false in config</div>
+
+      </div><!-- /rb-outcomes -->
+
+      <!-- Main grid: incident timeline + terminal log -->
+      <div class="rb-main-grid pre-reveal">
+
+        <!-- Incident timeline -->
+        <div class="rb-timeline" role="region" aria-label="Incident timeline">
+          <div class="rb-tl-header">
+            <span class="rb-tl-dot-header"></span>
+            Incident Timeline
+          </div>
+
+          <!-- Phase 1: health check failure -->
+          <div class="rb-phase fail-phase">
+            <div class="rb-phase-left">
+              <div class="rb-phase-dot fail">✕</div>
+              <div class="rb-phase-connector"></div>
+            </div>
+            <div class="rb-phase-content">
+              <div class="rb-phase-badge">STEP 7 — VERIFY</div>
+              <div class="rb-phase-title">Health Check Failed</div>
+              <div class="rb-phase-desc">
+                Polled <code style="font-size:11px;color:var(--text-secondary)">localhost:3000/health</code> three times
+                after 10s warmup. All three attempts returned HTTP 503. Deploy marked as failed.
+              </div>
+              <div class="rb-phase-ts">09:15:47 UTC &nbsp;·&nbsp; 3 retries &nbsp;·&nbsp; 30s elapsed</div>
+            </div>
+          </div>
+
+          <!-- Phase 2: symlink restored -->
+          <div class="rb-phase warn-phase">
+            <div class="rb-phase-left">
+              <div class="rb-phase-dot warn">↩</div>
+              <div class="rb-phase-connector"></div>
+            </div>
+            <div class="rb-phase-content">
+              <div class="rb-phase-badge">AUTO-ROLLBACK</div>
+              <div class="rb-phase-title">Symlink Restored Atomically</div>
+              <div class="rb-phase-desc">
+                <code style="font-size:11px;color:var(--text-secondary)">ln -sfn</code> swaps
+                <code style="font-size:11px;color:var(--text-secondary)">/var/www/current</code> back to the previous
+                release in a single syscall. pm2 reloaded. nginx reloaded.
+              </div>
+              <div class="rb-phase-ts">09:16:20 UTC &nbsp;·&nbsp; atomic &nbsp;·&nbsp; &lt; 1s</div>
+            </div>
+          </div>
+
+          <!-- Phase 3: verified -->
+          <div class="rb-phase ok-phase">
+            <div class="rb-phase-left">
+              <div class="rb-phase-dot ok">✓</div>
+            </div>
+            <div class="rb-phase-content">
+              <div class="rb-phase-badge">VERIFIED &amp; NOTIFIED</div>
+              <div class="rb-phase-title">Recovery Confirmed</div>
+              <div class="rb-phase-desc">
+                Health check returned HTTP 200 on the first attempt. Slack warned with ⚠️ message.
+                Rollback state file cleared. Engineers can investigate without urgency.
+              </div>
+              <div class="rb-phase-ts">09:16:31 UTC &nbsp;·&nbsp; HTTP 200 &nbsp;·&nbsp; Slack notified</div>
+            </div>
+          </div>
+
+        </div><!-- /rb-timeline -->
+
+        <!-- Log terminal -->
+        <div class="rb-terminal" role="region" aria-label="Rollback log output">
+          <div class="rb-term-bar">
+            <span class="dot dot-red"    aria-hidden="true"></span>
+            <span class="dot dot-yellow" aria-hidden="true"></span>
+            <span class="dot dot-green"  aria-hidden="true"></span>
+            <span class="rb-term-title">rollback.log — 20260530</span>
+            <span class="rb-term-badge">INCIDENT</span>
+          </div>
+          <div class="rb-term-body" aria-hidden="true">
+<span class="rb-line step">━━━ Step 7: VERIFY DEPLOYMENT ━━━</span>
+<span class="rb-line dim">[09:15:47] [VERIFY] Waiting 10s for app to start...</span>
+<span class="rb-line dim">[09:15:57] [VERIFY] Attempt 1/3: localhost:3000/health</span>
+<span class="rb-line warn">[09:15:58] [VERIFY] HTTP 503 — attempt 1 failed</span>
+<span class="rb-line dim">[09:16:08] [VERIFY] Attempt 2/3: localhost:3000/health</span>
+<span class="rb-line warn">[09:16:09] [VERIFY] HTTP 503 — attempt 2 failed</span>
+<span class="rb-line dim">[09:16:19] [VERIFY] Attempt 3/3: localhost:3000/health</span>
+<span class="rb-line warn">[09:16:20] [VERIFY] HTTP 503 — attempt 3 failed</span>
+<span class="rb-line fail">[09:16:20] [VERIFY] FAILED — triggering AUTO-ROLLBACK</span>
+<span class="rb-line dim"> </span>
+<span class="rb-line step">━━━ AUTO-ROLLBACK ━━━</span>
+<span class="rb-line warn">[09:16:20] [ROLLBACK] Reason: health-check failed</span>
+<span class="rb-line warn">[09:16:20] [ROLLBACK] 20260530-091500 → 20260529-143021</span>
+<span class="rb-line dim">[09:16:20] [SWITCH]   ln -sfn /var/www/releases/20260529-143021</span>
+<span class="rb-line ok">[09:16:20] [SWITCH]   Symlink restored (atomic)</span>
+<span class="rb-line dim">[09:16:21] [RESTART]  pm2 reload myapp → OK</span>
+<span class="rb-line dim">[09:16:21] [RESTART]  systemctl reload nginx → OK</span>
+<span class="rb-line dim"> </span>
+<span class="rb-line step">━━━ VERIFY ROLLBACK ━━━</span>
+<span class="rb-line dim">[09:16:21] [ROLLBACK] Health check: localhost:3000/health</span>
+<span class="rb-line ok">[09:16:31] [ROLLBACK] HTTP 200 — rollback verified ✓</span>
+<span class="rb-line dim"> </span>
+<span class="rb-line step">━━━ NOTIFY ━━━</span>
+<span class="rb-line ok">[09:16:31] [NOTIFY]   Slack ⚠️  sent (rollback)</span>
+<span class="rb-line ok">[09:16:31] [ROLLBACK] Complete in 44s — running 20260529-143021</span>
+          </div>
+        </div><!-- /rb-terminal -->
+
+      </div><!-- /rb-main-grid -->
+
+      <!-- Protocol cards -->
+      <div class="rb-protocols pre-reveal">
+
+        <div class="rb-protocol trigger">
+          <div class="rb-protocol-icon">⚡</div>
+          <div class="rb-protocol-title">Auto-Trigger Conditions</div>
+          <div class="rb-protocol-desc">
+            Health check returns non-200 after all retries, or any uncaught error after the symlink switch.
+          </div>
+          <code class="rb-protocol-code">AUTO_ROLLBACK=true  # in config.conf
+HEALTH_RETRIES=3    # attempts before abort
+HEALTH_WARMUP=10    # seconds before first check</code>
         </div>
-      </div>
+
+        <div class="rb-protocol manual">
+          <div class="rb-protocol-icon">↩</div>
+          <div class="rb-protocol-title">Manual Rollback</div>
+          <div class="rb-protocol-desc">
+            Run from any terminal. Restores previous release, restarts services, and verifies in one command.
+          </div>
+          <code class="rb-protocol-code">./deploy.sh production --rollback
+# or after install:
+deploy production --rollback</code>
+        </div>
+
+        <div class="rb-protocol notify">
+          <div class="rb-protocol-icon">🔔</div>
+          <div class="rb-protocol-title">Instant Notification</div>
+          <div class="rb-protocol-desc">
+            Yellow Slack warning with release IDs, environment, timestamp, and reason. Email log attached.
+          </div>
+          <code class="rb-protocol-code">SLACK_WEBHOOK="https://hooks.slack.com/..."
+NOTIFY_EMAIL="devops@company.com"
+NOTIFY_METHOD="both"</code>
+        </div>
+
+      </div><!-- /rb-protocols -->
+
     </section>
+    </div><!-- /rollback-section-outer -->
 
     <hr class="divider">
 
