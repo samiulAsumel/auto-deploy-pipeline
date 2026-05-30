@@ -244,7 +244,7 @@ html::before {
 
 /* ── Hero title — full professional treatment ── */
 h1.hero-title {
-  font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+  font-size: clamp(2.4rem, 3.5vw, 3.5rem);
   margin-bottom: 26px;
   line-height: 1.15;       /* enough room so descenders + underline accent never clip */
   letter-spacing: -.02em;  /* slightly loosened so last char doesn't overflow min-width:0 */
@@ -569,8 +569,6 @@ section {
 .feature-desc  { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
 
 /* ── Script explorer ──────────────────────────────────────────────────────── */
-#scripts-section { max-width: var(--max-w); margin: 0 auto; padding: var(--section-py) 32px; }
-
 .scripts-layout { display: flex; gap: 20px; align-items: flex-start; }
 .scripts-sidebar {
   width: 240px; flex-shrink: 0;
@@ -796,25 +794,18 @@ section {
 }
 .rb-protocol::before {
   content: '';
-  position: absolute; bottom: 0; left: 0; right: 0; height: 2px; opacity: 0;
-  transition: opacity .2s;
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
 }
 .rb-protocol:hover { transform: translateY(-3px); }
 
-.rb-protocol.trigger  { }
-.rb-protocol.trigger::before  { background: linear-gradient(90deg, var(--red), transparent); }
-.rb-protocol.trigger:hover  { border-color: var(--red-glow); }
-.rb-protocol.trigger::before  { opacity: 1; }
+.rb-protocol.trigger::before { background: linear-gradient(90deg, var(--red), transparent); }
+.rb-protocol.trigger:hover   { border-color: var(--red-glow); }
 
-.rb-protocol.manual  { }
-.rb-protocol.manual::before   { background: linear-gradient(90deg, var(--blue), transparent); }
-.rb-protocol.manual:hover   { border-color: var(--blue-glow); }
-.rb-protocol.manual::before   { opacity: 1; }
+.rb-protocol.manual::before  { background: linear-gradient(90deg, var(--blue), transparent); }
+.rb-protocol.manual:hover    { border-color: var(--blue-glow); }
 
-.rb-protocol.notify  { }
-.rb-protocol.notify::before   { background: linear-gradient(90deg, var(--emerald), transparent); }
-.rb-protocol.notify:hover   { border-color: var(--emerald-glow); }
-.rb-protocol.notify::before   { opacity: 1; }
+.rb-protocol.notify::before  { background: linear-gradient(90deg, var(--emerald), transparent); }
+.rb-protocol.notify:hover    { border-color: var(--emerald-glow); }
 
 .rb-protocol-icon {
   width: 40px; height: 40px; border-radius: var(--radius-md);
@@ -857,8 +848,6 @@ td.ok-cell   { color: var(--emerald); font-weight: 600; }
 td.na-cell   { color: var(--text-muted); }
 
 /* ── Playground ───────────────────────────────────────────────────────────── */
-#playground { max-width: var(--max-w); margin: 0 auto; padding: var(--section-py) 32px; }
-
 .pg-layout { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
 
 .pg-config {
