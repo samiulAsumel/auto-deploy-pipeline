@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Automated Deployment Pipeline — production-grade bash deploy script with auto-rollback, Slack/email alerts, and zero-downtime symlink switching for RHEL 9 and Ubuntu Server.">
+  <meta name="theme-color" content="#050810">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Automated Deployment Pipeline — v1.0.0">
+  <meta property="og:description" content="One command deploy with auto-rollback, health checks, and Slack notifications. Node.js, Python, PHP, Static. RHEL 9 / Ubuntu.">
+  <meta property="og:url" content="https://github.com/samiulAsumel/auto-deploy-pipeline">
+  <meta name="twitter:card" content="summary">
+  <title>Automated Deployment Pipeline — v1.0.0</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <noscript><style>.pre-reveal{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body>
+  <div id="progress-bar" role="progressbar" aria-label="Page scroll progress"></div>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <!-- ═══════════════════════ HEADER ═══════════════════════ -->
+  <header id="site-header" role="banner">
+    <div class="header-brand">
+      <svg class="brand-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 3 C16 3 22 8 22 16 L16 22 L10 16 C10 8 16 3 16 3Z" fill="currentColor" opacity="0.92"/>
+        <circle cx="16" cy="13" r="2.5" fill="#050810" stroke="#93C5FD" stroke-width="1"/>
+        <path d="M10 16 L7 21 L12 19Z" fill="currentColor" opacity="0.7"/>
+        <path d="M22 16 L25 21 L20 19Z" fill="currentColor" opacity="0.7"/>
+        <path d="M14 22 Q16 27 18 22" fill="#F59E0B" opacity="0.9"/>
+      </svg>
+      <span class="brand-text">DEPLOY<span class="brand-sep">·</span>PIPELINE</span>
+    </div>
+
+    <nav class="header-nav" aria-label="Main navigation">
+      <a class="nav-link active" href="#hero">Home</a>
+      <a class="nav-link" href="#flow">Flow</a>
+      <a class="nav-link" href="#scripts-section">Scripts</a>
+      <a class="nav-link" href="#rollback">Rollback</a>
+      <a class="nav-link" href="#environments">Environments</a>
+      <a class="nav-link" href="#playground">Playground</a>
+    </nav>
+
+    <div class="header-right">
+      <div class="header-status">
+        <span class="status-dot status-blue" aria-label="Pipeline ready"></span>
+        <span class="status-label">PIPELINE READY</span>
+      </div>
+      <a class="gh-btn" href="https://github.com/samiulAsumel/auto-deploy-pipeline" target="_blank" rel="noopener noreferrer" aria-label="View on GitHub">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0112 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0022 12c0-5.52-4.48-10-10-10z"/></svg>
+        GitHub
+      </a>
+    </div>
+
+    <button class="hamburger" aria-expanded="false" aria-controls="mobile-nav" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <nav id="mobile-nav" class="mobile-nav-overlay" aria-label="Mobile navigation">
+    <a class="mnav-link" href="#hero">Home</a>
+    <a class="mnav-link" href="#flow">Flow</a>
+    <a class="mnav-link" href="#scripts-section">Scripts</a>
+    <a class="mnav-link" href="#rollback">Rollback</a>
+    <a class="mnav-link" href="#environments">Environments</a>
+    <a class="mnav-link" href="#playground">Playground</a>
+  </nav>
+
+  <!-- ═══════════════════════ MAIN ═══════════════════════ -->
+  <main id="main-content">
+
+    <!-- ── HERO ────────────────────────────────────────────── -->
+    <section id="hero" aria-label="Hero">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-dot" aria-hidden="true"></span>
+          Production-Grade · Zero Downtime · Pure Bash
+        </div>
+        <h1 class="hero-title">
+          Automated<br>
+          <span class="hero-title-line2">Deployment Pipeline</span>
+        </h1>
+        <p class="hero-desc">
+          One command deploys your app: pulls code, runs tests, backs up, switches atomically,
+          restarts services, verifies health. If anything fails — auto-rolls back to the previous
+          release. Slack notified on every outcome.
+        </p>
+        <div class="hero-ctas">
+          <a class="cta-primary" href="https://github.com/samiulAsumel/auto-deploy-pipeline" target="_blank" rel="noopener noreferrer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0112 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0022 12c0-5.52-4.48-10-10-10z"/></svg>
+            View on GitHub
+          </a>
+          <a class="cta-secondary" href="#scripts-section">Browse Scripts</a>
+        </div>
+        <div class="hero-badges">
+          <span class="badge">RHEL 9</span>
+          <span class="badge">Ubuntu Server</span>
+          <span class="badge">Node.js</span>
+          <span class="badge">Python</span>
+          <span class="badge">PHP</span>
+          <span class="badge">Static</span>
+          <span class="badge">pm2</span>
+          <span class="badge">gunicorn</span>
+          <span class="badge">nginx</span>
+          <span class="badge">Slack</span>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="terminal-card" role="img" aria-label="Deployment terminal demo">
+          <div class="terminal-bar">
+            <span class="dot dot-red"  aria-hidden="true"></span>
+            <span class="dot dot-yellow" aria-hidden="true"></span>
+            <span class="dot dot-green"  aria-hidden="true"></span>
+            <span class="terminal-title">deploy.sh — production</span>
+          </div>
+          <div class="terminal-body" aria-hidden="true">
+<span class="t-prompt">$ </span><span class="t-cmd">./deploy.sh production</span>
+<span class="t-dim">╔═══ Automated Deployment Pipeline v1.0.0 ═══╗</span>
+
+<span class="t-step">━━━ Step 1: PRE-FLIGHT CHECKS ━━━</span>
+<span class="t-ok">[OK]  [PREFLIGHT] Disk: 14GB free (need 2GB)</span>
+<span class="t-ok">[OK]  [PREFLIGHT] Git repo accessible</span>
+<span class="t-ok">[OK]  [PREFLIGHT] Database reachable: localhost:5432</span>
+
+<span class="t-step">━━━ Step 2: BACKUP CURRENT ━━━</span>
+<span class="t-ok">[OK]  [BACKUP] Previous: 20260529-143021</span>
+
+<span class="t-step">━━━ Step 3: PULL CODE ━━━</span>
+<span class="t-ok">[OK]  [PULL]  Cloned commit: a3f92c1 (main)</span>
+<span class="t-ok">[OK]  [PULL]  npm packages installed</span>
+<span class="t-ok">[OK]  [PULL]  Build complete</span>
+
+<span class="t-step">━━━ Step 4: RUN TESTS ━━━</span>
+<span class="t-ok">[OK]  [TESTS] PASSED in 18s</span>
+
+<span class="t-step">━━━ Step 5: SWITCH VERSION ━━━</span>
+<span class="t-ok">[OK]  [SWITCH] /var/www/current → 20260530-091500</span>
+
+<span class="t-step">━━━ Step 6: RESTART SERVICES ━━━</span>
+<span class="t-ok">[OK]  [RESTART] pm2 reloaded: myapp</span>
+<span class="t-ok">[OK]  [RESTART] nginx reloaded</span>
+
+<span class="t-step">━━━ Step 7: VERIFY DEPLOYMENT ━━━</span>
+<span class="t-ok">[OK]  [VERIFY] PASSED (HTTP 200) on attempt 1</span>
+
+<span class="t-step">━━━ Step 9: NOTIFY ━━━</span>
+<span class="t-ok">[OK]  [NOTIFY] Slack notification sent (success)</span>
+<span class="t-ok">[OK]  [DEPLOY] Deploy 20260530-091500 complete in 47s</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── DEPLOYMENT FLOW ─────────────────────────────────── -->
+    <section id="flow" aria-labelledby="flow-title">
+      <p class="section-eyebrow">Deployment Flow</p>
+      <h2 class="section-title pre-reveal" id="flow-title">9 Steps. One Command.</h2>
+      <p class="section-desc pre-reveal">
+        Every deploy follows the same battle-tested sequence. Each step is modular —
+        you can skip tests, add migrations, or extend any step without touching the orchestrator.
+      </p>
+
+      <div class="flow-grid">
+        <div class="flow-card pre-reveal">
+          <div class="flow-num">STEP 01</div>
+          <div class="flow-icon">🔍</div>
+          <div class="flow-title">Pre-Flight Checks</div>
+          <div class="flow-desc">Disk space, git access, database reachability, required tools. Abort before any code is touched.</div>
+        </div>
+        <div class="flow-card pre-reveal">
+          <div class="flow-num">STEP 02</div>
+          <div class="flow-icon">💾</div>
+          <div class="flow-title">Backup Current</div>
+          <div class="flow-desc">Records the current release path. The releases/ directory retains all versions — no file copy needed.</div>
+        </div>
+        <div class="flow-card pre-reveal">
+          <div class="flow-num">STEP 03</div>
+          <div class="flow-icon">📦</div>
+          <div class="flow-title">Pull Code</div>
+          <div class="flow-desc">git clone --depth 1 into a timestamped release dir. Links shared .env/uploads. Installs deps and builds.</div>
+        </div>
+        <div class="flow-card pre-reveal">
+          <div class="flow-num">STEP 04</div>
+          <div class="flow-icon">🧪</div>
+          <div class="flow-title">Run Tests</div>
+          <div class="flow-desc">Runs your test suite inside the new release. Abort fires before any switch — production is never touched on failure.</div>
+        </div>
+        <div class="flow-card pre-reveal">
+          <div class="flow-num">STEP 05</div>
+          <div class="flow-icon">⚡</div>
+          <div class="flow-title">Switch Version</div>
+          <div class="flow-desc">Atomic ln -sfn swaps the /var/www/current symlink. A single syscall — zero downtime during the switch.</div>
+        </div>
+        <div class="flow-card pre-reveal">
+          <div class="flow-num">STEP 06</div>
+          <div class="flow-icon">🔄</div>
+          <div class="flow-title">Restart Services</div>
+          <div class="flow-desc">pm2 reload / gunicorn restart / php-fpm reload. nginx config test then reload. Falls back gracefully.</div>
+        </div>
+        <div class="flow-card pre-reveal">
+          <div class="flow-num">STEP 07</div>
+          <div class="flow-icon">❤️</div>
+          <div class="flow-title">Verify Deployment</div>
+          <div class="flow-desc">Polls HEALTH_URL up to 3 times. HTTP 200 = pass. Failure triggers immediate auto-rollback.</div>
+        </div>
+        <div class="flow-card pre-reveal">
+          <div class="flow-num">STEP 08</div>
+          <div class="flow-icon">🧹</div>
+          <div class="flow-title">Cleanup Releases</div>
+          <div class="flow-desc">Keeps the last KEEP_RELEASES directories (default 5). Older releases are automatically removed.</div>
+        </div>
+        <div class="flow-card pre-reveal">
+          <div class="flow-num">STEP 09</div>
+          <div class="flow-icon">📣</div>
+          <div class="flow-title">Notify</div>
+          <div class="flow-desc">Slack green/red message and/or email with deploy ID, environment, commit hash, user, and duration.</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── SCRIPTS EXPLORER ───────────────────────────────── -->
+    <section id="scripts-section" aria-labelledby="scripts-title">
+      <p class="section-eyebrow">Scripts</p>
+      <h2 class="section-title pre-reveal" id="scripts-title">Browse Every Module</h2>
+      <p class="section-desc pre-reveal">
+        Each lib/ module is independently sourceable and testable. The orchestrator
+        calls them in sequence — swap or extend any module without touching deploy.sh.
+      </p>
+
+      <div class="scripts-layout">
+        <nav class="scripts-sidebar" aria-label="Script list" id="script-nav">
+          <!-- Populated by JS -->
+        </nav>
+        <div class="scripts-main" id="script-display">
+          <div class="script-header" id="script-header"></div>
+          <div class="code-wrap" style="position:relative;">
+            <button class="code-copy-btn" id="code-copy-btn" aria-label="Copy code">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+            <pre id="script-code"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── ROLLBACK ───────────────────────────────────────── -->
+    <section id="rollback" aria-labelledby="rollback-title">
+      <p class="section-eyebrow">Auto-Rollback</p>
+      <h2 class="section-title pre-reveal" id="rollback-title">No More 2AM Panic Fixes</h2>
+      <p class="section-desc pre-reveal">
+        If the health check fails after deploy, the pipeline automatically reverts to the previous
+        release — same services restarted, same health check verified, Slack notified yellow.
+        The whole rollback takes under 30 seconds.
+      </p>
+
+      <div class="rollback-visual pre-reveal" role="img" aria-label="Auto-rollback flow">
+<span class="rv-step">━━━ Step 7: VERIFY DEPLOYMENT ━━━</span>
+<span class="rv-dim">[2026-05-30 09:15:47] [VERIFY] Waiting 10s for app to start...</span>
+<span class="rv-dim">[2026-05-30 09:15:57] [VERIFY] Health check attempt 1/3: http://localhost:3000/health</span>
+<span class="rv-warn">[2026-05-30 09:15:58] [VERIFY] Attempt 1: HTTP 503</span>
+<span class="rv-dim">[2026-05-30 09:16:08] [VERIFY] Health check attempt 2/3: http://localhost:3000/health</span>
+<span class="rv-warn">[2026-05-30 09:16:09] [VERIFY] Attempt 2: HTTP 503</span>
+<span class="rv-dim">[2026-05-30 09:16:19] [VERIFY] Health check attempt 3/3: http://localhost:3000/health</span>
+<span class="rv-warn">[2026-05-30 09:16:20] [VERIFY] Attempt 3: HTTP 503</span>
+<span class="rv-fail">[2026-05-30 09:16:20] [VERIFY] FAILED after 3 attempts — triggering auto-rollback</span>
+
+<span class="rv-step">━━━ AUTO-ROLLBACK ━━━</span>
+<span class="rv-warn">[2026-05-30 09:16:20] [ROLLBACK] Reason: health-check failed</span>
+<span class="rv-warn">[2026-05-30 09:16:20] [ROLLBACK] Restoring: 20260529-143021</span>
+<span class="rv-dim">[2026-05-30 09:16:20] [SWITCH]   /var/www/current → 20260529-143021</span>
+<span class="rv-dim">[2026-05-30 09:16:21] [RESTART]  pm2 reloaded: myapp</span>
+<span class="rv-dim">[2026-05-30 09:16:21] [RESTART]  nginx reloaded</span>
+<span class="rv-dim">[2026-05-30 09:16:31] [ROLLBACK] Health check: HTTP 200</span>
+<span class="rv-step">[OK]  [ROLLBACK] Rollback verified — running 20260529-143021</span>
+<span class="rv-dim">[2026-05-30 09:16:31] [NOTIFY]   Slack notification sent (rollback)</span>
+      </div>
+
+      <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">
+        <div style="background:var(--bg-card);border:1px solid var(--border-dim);border-radius:var(--radius-md);padding:16px 20px;flex:1;min-width:200px;">
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--blue);margin-bottom:6px;">TRIGGER</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Health check returns non-200 after all retries, or any error after symlink switch</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border-dim);border-radius:var(--radius-md);padding:16px 20px;flex:1;min-width:200px;">
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--emerald);margin-bottom:6px;">MANUAL</div>
+          <div style="font-size:13px;color:var(--text-secondary);font-family:var(--font-mono);">./deploy.sh production --rollback</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border-dim);border-radius:var(--radius-md);padding:16px 20px;flex:1;min-width:200px;">
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--orange);margin-bottom:6px;">DISABLE</div>
+          <div style="font-size:13px;color:var(--text-secondary);font-family:var(--font-mono);">AUTO_ROLLBACK=false in config</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── FEATURES ───────────────────────────────────────── -->
+    <section id="features" aria-labelledby="features-title">
+      <p class="section-eyebrow">Features</p>
+      <h2 class="section-title pre-reveal" id="features-title">Everything Built In</h2>
+      <p class="section-desc pre-reveal">No external tools. No Docker. No CI/CD platform required. Pure Bash that runs anywhere.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card pre-reveal">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">Zero-Downtime Deploy</div>
+          <div class="feature-desc">Atomic symlink switch is a single syscall. Traffic never hits an incomplete release.</div>
+        </div>
+        <div class="feature-card pre-reveal">
+          <div class="feature-icon">🔁</div>
+          <div class="feature-title">Auto-Rollback</div>
+          <div class="feature-desc">Health check fails → previous release restored automatically. No human intervention needed.</div>
+        </div>
+        <div class="feature-card pre-reveal">
+          <div class="feature-icon">🧪</div>
+          <div class="feature-title">Pre-Deploy Tests</div>
+          <div class="feature-desc">Test suite runs before any production change. Failed tests abort the deploy entirely.</div>
+        </div>
+        <div class="feature-card pre-reveal">
+          <div class="feature-icon">📣</div>
+          <div class="feature-title">Slack + Email Alerts</div>
+          <div class="feature-desc">Colour-coded Slack messages (green/red/yellow) with commit, env, user, and duration.</div>
+        </div>
+        <div class="feature-card pre-reveal">
+          <div class="feature-icon">🌍</div>
+          <div class="feature-title">Multi-Environment</div>
+          <div class="feature-desc">production / staging / dev configs. One command, one flag: ./deploy.sh staging.</div>
+        </div>
+        <div class="feature-card pre-reveal">
+          <div class="feature-icon">🗂️</div>
+          <div class="feature-title">Shared Files</div>
+          <div class="feature-desc">.env, uploads, and storage symlinked from a shared dir — persisted across every deploy.</div>
+        </div>
+        <div class="feature-card pre-reveal">
+          <div class="feature-icon">🗑️</div>
+          <div class="feature-title">Release Cleanup</div>
+          <div class="feature-desc">Keeps KEEP_RELEASES old versions (default 5). Older release dirs are automatically pruned.</div>
+        </div>
+        <div class="feature-card pre-reveal">
+          <div class="feature-icon">🔒</div>
+          <div class="feature-title">Lock File</div>
+          <div class="feature-desc">Prevents concurrent deploys with a PID-based lock. Stale locks from dead processes are auto-cleared.</div>
+        </div>
+        <div class="feature-card pre-reveal">
+          <div class="feature-icon">🌐</div>
+          <div class="feature-title">App-Type Aware</div>
+          <div class="feature-desc">npm ci / pip install / composer install / static — install logic adapts to your APP_TYPE.</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── ENVIRONMENTS ───────────────────────────────────── -->
+    <section id="environments" aria-labelledby="env-title">
+      <p class="section-eyebrow">Environments</p>
+      <h2 class="section-title pre-reveal" id="env-title">One Config per Environment</h2>
+      <p class="section-desc pre-reveal">
+        config.conf holds defaults. Per-environment files override only what differs.
+        The orchestrator loads both — no duplication.
+      </p>
+
+      <div class="pre-reveal" style="overflow-x:auto;">
+        <table class="env-table" aria-label="Environment comparison">
+          <thead>
+            <tr>
+              <th>Setting</th>
+              <th>dev</th>
+              <th>staging</th>
+              <th>production</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono-cell">BRANCH</td>
+              <td class="mono-cell">develop</td>
+              <td class="mono-cell">develop</td>
+              <td class="mono-cell">main</td>
+            </tr>
+            <tr>
+              <td class="mono-cell">RUN_TESTS</td>
+              <td class="na-cell">false</td>
+              <td class="ok-cell">true</td>
+              <td class="ok-cell">true</td>
+            </tr>
+            <tr>
+              <td class="mono-cell">AUTO_ROLLBACK</td>
+              <td class="na-cell">false</td>
+              <td class="na-cell">false</td>
+              <td class="ok-cell">true</td>
+            </tr>
+            <tr>
+              <td class="mono-cell">NOTIFY_ON</td>
+              <td class="mono-cell">failure</td>
+              <td class="mono-cell">failure</td>
+              <td class="mono-cell">both</td>
+            </tr>
+            <tr>
+              <td class="mono-cell">KEEP_RELEASES</td>
+              <td class="mono-cell">2</td>
+              <td class="mono-cell">3</td>
+              <td class="mono-cell">5</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── PLAYGROUND ─────────────────────────────────────── -->
+    <section id="playground" aria-labelledby="playground-title">
+      <p class="section-eyebrow">Playground</p>
+      <h2 class="section-title pre-reveal" id="playground-title">Simulate Your Deploy</h2>
+      <p class="section-desc pre-reveal">
+        Configure your stack, pick flags, and watch a live animated simulation of every deploy step.
+        No server required — pure browser.
+      </p>
+
+      <div class="pg-layout pre-reveal">
+
+        <!-- ── LEFT: config panel ──────────────────────── -->
+        <div class="pg-config">
+          <div class="pg-config-head">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+            <h3>Configuration</h3>
+          </div>
+
+          <div class="pg-config-body">
+
+            <!-- Environment -->
+            <div>
+              <div class="pg-field-label">Environment</div>
+              <div class="pg-seg" role="group" aria-label="Environment">
+                <button class="pg-seg-btn env-prod active" data-env="production">production</button>
+                <button class="pg-seg-btn env-stage"       data-env="staging">staging</button>
+                <button class="pg-seg-btn env-dev"         data-env="dev">dev</button>
+              </div>
+            </div>
+
+            <!-- App Type -->
+            <div>
+              <div class="pg-field-label">App Type</div>
+              <div class="pg-type-grid" role="group" aria-label="Application type">
+                <button class="pg-type-card active" data-type="nodejs" aria-pressed="true">
+                  <span class="pg-type-icon">⚡</span>
+                  <span class="pg-type-name">Node.js</span>
+                </button>
+                <button class="pg-type-card" data-type="python" aria-pressed="false">
+                  <span class="pg-type-icon">🐍</span>
+                  <span class="pg-type-name">Python</span>
+                </button>
+                <button class="pg-type-card" data-type="php" aria-pressed="false">
+                  <span class="pg-type-icon">🐘</span>
+                  <span class="pg-type-name">PHP</span>
+                </button>
+                <button class="pg-type-card" data-type="static" aria-pressed="false">
+                  <span class="pg-type-icon">📄</span>
+                  <span class="pg-type-name">Static</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- App Server -->
+            <div>
+              <div class="pg-field-label">App Server</div>
+              <div class="pg-server-row" role="group" aria-label="App server">
+                <button class="pg-server-pill active" data-server="pm2">pm2</button>
+                <button class="pg-server-pill"        data-server="gunicorn">gunicorn</button>
+                <button class="pg-server-pill"        data-server="php-fpm">php-fpm</button>
+                <button class="pg-server-pill"        data-server="none">none</button>
+              </div>
+            </div>
+
+            <!-- Options / Toggles -->
+            <div>
+              <div class="pg-field-label">Options</div>
+              <div class="pg-toggles">
+                <div class="pg-toggle-row">
+                  <div>
+                    <div class="pg-toggle-label">Run Tests</div>
+                    <div class="pg-toggle-sub">npm test / pytest before switch</div>
+                  </div>
+                  <label class="pg-switch" aria-label="Run tests">
+                    <input type="checkbox" id="sw-tests" checked>
+                    <span class="pg-switch-track"></span>
+                  </label>
+                </div>
+                <div class="pg-toggle-row">
+                  <div>
+                    <div class="pg-toggle-label">Dry Run</div>
+                    <div class="pg-toggle-sub">preview only, no changes</div>
+                  </div>
+                  <label class="pg-switch" aria-label="Dry run">
+                    <input type="checkbox" id="sw-dryrun">
+                    <span class="pg-switch-track"></span>
+                  </label>
+                </div>
+                <div class="pg-toggle-row">
+                  <div>
+                    <div class="pg-toggle-label">Auto-Rollback</div>
+                    <div class="pg-toggle-sub">revert if health check fails</div>
+                  </div>
+                  <label class="pg-switch" aria-label="Auto-rollback">
+                    <input type="checkbox" id="sw-rollback" checked>
+                    <span class="pg-switch-track"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live command preview -->
+            <div class="pg-cmd-preview" aria-label="Generated deploy command">
+              <span class="pg-cmd-prompt">$</span>
+              <span class="pg-cmd-text" id="pg-cmd-text">./deploy.sh production</span>
+              <button class="pg-cmd-copy" id="pg-cmd-copy" aria-label="Copy command">copy</button>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="pg-actions">
+              <button class="pg-btn-primary" id="pg-run-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3l14 9-14 9V3z"/></svg>
+                Simulate Deploy
+              </button>
+              <button class="pg-btn-secondary" id="pg-rollback-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg>
+                Simulate Rollback
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── RIGHT: terminal panel ────────────────────── -->
+        <div class="pg-terminal-wrap">
+          <!-- Terminal bar -->
+          <div class="pg-term-bar">
+            <span class="dot dot-red"    aria-hidden="true"></span>
+            <span class="dot dot-yellow" aria-hidden="true"></span>
+            <span class="dot dot-green"  aria-hidden="true"></span>
+            <span class="pg-term-title" id="pg-term-title">deploy.sh — ready</span>
+            <div class="pg-term-status">
+              <span class="pg-status-dot" id="pg-status-dot"></span>
+              <span id="pg-status-label">idle</span>
+            </div>
+          </div>
+
+          <!-- Step progress -->
+          <div class="pg-progress-bar" id="pg-progress-wrap" style="display:none;">
+            <div class="pg-progress-label" id="pg-progress-label">Step 0 / 9</div>
+            <div class="pg-steps-track" id="pg-steps-track">
+              <div class="pg-step-pip" data-step="1"></div>
+              <div class="pg-step-pip" data-step="2"></div>
+              <div class="pg-step-pip" data-step="3"></div>
+              <div class="pg-step-pip" data-step="4"></div>
+              <div class="pg-step-pip" data-step="5"></div>
+              <div class="pg-step-pip" data-step="6"></div>
+              <div class="pg-step-pip" data-step="7"></div>
+              <div class="pg-step-pip" data-step="8"></div>
+              <div class="pg-step-pip" data-step="9"></div>
+            </div>
+          </div>
+
+          <!-- Output body -->
+          <div class="pg-term-body" id="pg-term-body" aria-live="polite" aria-label="Simulated deploy output"></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+  <footer role="contentinfo">
+    <p>
+      <strong style="color:var(--text-primary);">Automated Deployment Pipeline</strong> — v1.0.0 &nbsp;·&nbsp;
+      MIT License &nbsp;·&nbsp;
+      <a href="https://github.com/samiulAsumel/auto-deploy-pipeline" target="_blank" rel="noopener noreferrer">GitHub</a>
+      &nbsp;·&nbsp; Built with Pure Bash
+    </p>
+    <p style="margin-top:8px;">RHEL 9 / Rocky Linux / Ubuntu Server · Node.js · Python · PHP · Static</p>
+  </footer>
+
+  <script src="scripts-data.js"></script>
+  <script>
+  (() => {
+    'use strict';
+
+    // ── Page scroll progress bar ──────────────────────────
+    const bar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+      bar.style.width = Math.min(pct, 100) + '%';
+    }, { passive: true });
+
+    // ── Header scroll class ────────────────────────────────
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+
+    // ── Active nav link on scroll ─────────────────────────
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = Array.from(navLinks)
+      .map(a => document.querySelector(a.getAttribute('href')))
+      .filter(Boolean);
+
+    const navObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(s => navObs.observe(s));
+
+    // ── Reveal on scroll ──────────────────────────────────
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('revealed'); revealObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.pre-reveal').forEach(el => revealObs.observe(el));
+
+    // ── Mobile nav ────────────────────────────────────────
+    const hamburger = document.querySelector('.hamburger');
+    const mobileNav = document.getElementById('mobile-nav');
+    hamburger.addEventListener('click', () => {
+      const open = mobileNav.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', String(open));
+    });
+    mobileNav.querySelectorAll('.mnav-link').forEach(a =>
+      a.addEventListener('click', () => {
+        mobileNav.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      })
+    );
+
+    // ════════════════════════════════════════════════════════
+    // SCRIPT EXPLORER
+    // ════════════════════════════════════════════════════════
+    const scriptNav  = document.getElementById('script-nav');
+    const scriptHdr  = document.getElementById('script-header');
+    const scriptCode = document.getElementById('script-code');
+    const copyBtn    = document.getElementById('code-copy-btn');
+
+    const badgeLabel = { main: 'MAIN', lib: 'LIB', config: 'CONFIG', install: 'INSTALL' };
+
+    function renderScript(s) {
+      scriptHdr.innerHTML = `
+        <span class="script-name">${s.name}</span>
+        ${s.badges.map(b => `<span class="script-badge badge-${b}">${badgeLabel[b] || b.toUpperCase()}</span>`).join('')}
+        <span class="script-desc">${s.description}</span>
+      `;
+      scriptCode.textContent = s.code;
+      copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
+      copyBtn.classList.remove('copied');
+    }
+
+    copyBtn && copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(scriptCode.textContent).then(() => {
+        copyBtn.textContent = '✓ Copied';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      }).catch(() => {});
+    });
+
+    SCRIPTS_DATA.forEach((s, i) => {
+      const item = document.createElement('div');
+      item.className = 'sidebar-item' + (i === 0 ? ' active' : '');
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('aria-label', `View ${s.name}`);
+      item.innerHTML = `<span>${s.name}</span><span class="sidebar-badge">${s.badges[0]}</span>`;
+      item.addEventListener('click', () => {
+        scriptNav.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        renderScript(s);
+      });
+      item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') item.click(); });
+      scriptNav.appendChild(item);
+    });
+    if (SCRIPTS_DATA.length) renderScript(SCRIPTS_DATA[0]);
+
+    // ════════════════════════════════════════════════════════
+    // PLAYGROUND — state
+    // ════════════════════════════════════════════════════════
+    let pgEnv    = 'production';
+    let pgType   = 'nodejs';
+    let pgServer = 'pm2';
+    let pgRunning = false;
+    let animTimers = [];
+
+    const cmdText      = document.getElementById('pg-cmd-text');
+    const cmdCopyBtn   = document.getElementById('pg-cmd-copy');
+    const termBody     = document.getElementById('pg-term-body');
+    const termTitle    = document.getElementById('pg-term-title');
+    const statusDot    = document.getElementById('pg-status-dot');
+    const statusLabel  = document.getElementById('pg-status-label');
+    const progressWrap = document.getElementById('pg-progress-wrap');
+    const progressLbl  = document.getElementById('pg-progress-label');
+    const pips         = document.querySelectorAll('.pg-step-pip');
+    const runBtn       = document.getElementById('pg-run-btn');
+    const rollbackBtn  = document.getElementById('pg-rollback-btn');
+    const swTests      = document.getElementById('sw-tests');
+    const swDryRun     = document.getElementById('sw-dryrun');
+    const swRollback   = document.getElementById('sw-rollback');
+
+    // ── Build live command string ─────────────────────────
+    function buildCmd() {
+      const flags = [];
+      if (swDryRun.checked)              flags.push('--dry-run');
+      if (!swTests.checked)              flags.push('--skip-tests');
+      const f = flags.length ? ' ' + flags.join(' ') : '';
+      return `./deploy.sh ${pgEnv}${f}`;
+    }
+    function updateCmd() { cmdText.textContent = buildCmd(); }
+
+    // ── Environment segmented buttons ─────────────────────
+    document.querySelectorAll('.pg-seg-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pg-seg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        pgEnv = btn.dataset.env;
+        termTitle.textContent = `deploy.sh — ${pgEnv}`;
+        updateCmd();
+      });
+    });
+
+    // ── App type cards ────────────────────────────────────
+    document.querySelectorAll('.pg-type-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.pg-type-card').forEach(c => {
+          c.classList.remove('active'); c.setAttribute('aria-pressed', 'false');
+        });
+        card.classList.add('active'); card.setAttribute('aria-pressed', 'true');
+        pgType = card.dataset.type;
+      });
+    });
+
+    // ── App server pills ──────────────────────────────────
+    document.querySelectorAll('.pg-server-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.pg-server-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        pgServer = pill.dataset.server;
+      });
+    });
+
+    // ── Toggle switches → update command preview ──────────
+    [swTests, swDryRun, swRollback].forEach(sw => sw.addEventListener('change', updateCmd));
+
+    // ── Copy command button ───────────────────────────────
+    cmdCopyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(buildCmd()).then(() => {
+        cmdCopyBtn.textContent = '✓';
+        cmdCopyBtn.classList.add('copied');
+        setTimeout(() => { cmdCopyBtn.textContent = 'copy'; cmdCopyBtn.classList.remove('copied'); }, 1800);
+      }).catch(() => {});
+    });
+
+    // ── Terminal helpers ──────────────────────────────────
+    const installMap = {
+      nodejs: 'npm ci --production',
+      python: 'pip3 install -r requirements.txt',
+      php:    'composer install --no-dev',
+      static: '# static — no dependencies'
+    };
+    const buildMap = {
+      nodejs: 'npm run build',
+      python: null,
+      php:    null,
+      static: null
+    };
+    const restartMap = {
+      pm2:      'pm2 reload myapp && pm2 save',
+      gunicorn: 'systemctl restart gunicorn',
+      'php-fpm':'systemctl reload php-fpm',
+      none:     '# no app server restart'
+    };
+
+    function clearTimers() { animTimers.forEach(clearTimeout); animTimers = []; }
+
+    function setStatus(state) {
+      statusDot.className = 'pg-status-dot' + (state ? ' ' + state : '');
+      const labels = { running: 'running', success: 'success', failure: 'failed', idle: 'idle' };
+      statusLabel.textContent = labels[state] || 'idle';
+    }
+
+    function setPip(step, cls) {
+      pips.forEach(p => {
+        const n = parseInt(p.dataset.step, 10);
+        if (n < step) p.className = 'pg-step-pip done';
+        else if (n === step) p.className = 'pg-step-pip ' + cls;
+        else p.className = 'pg-step-pip';
+      });
+      progressLbl.textContent = `Step ${step} / 9`;
+    }
+
+    function resetPips() {
+      pips.forEach(p => p.className = 'pg-step-pip');
+      progressLbl.textContent = 'Step 0 / 9';
+    }
+
+    // Append a line with a delay, return the timeout ID
+    function appendLine(cls, text, delay) {
+      const id = setTimeout(() => {
+        const span = document.createElement('span');
+        span.className = cls;
+        span.textContent = text;
+        termBody.appendChild(span);
+        termBody.scrollTop = termBody.scrollHeight;
+      }, delay);
+      animTimers.push(id);
+      return id;
+    }
+
+    function appendBlank(delay) { appendLine('pg-l-dim', '', delay); }
+
+    // ── Build deploy script lines ─────────────────────────
+    function buildDeployLines() {
+      const dryRun  = swDryRun.checked;
+      const noTests = !swTests.checked;
+      const branch  = pgEnv === 'production' ? 'main' : 'develop';
+      const now     = new Date();
+      const did     = now.toISOString().replace(/[-:T]/g,'').slice(0,15).replace(/(\d{8})(\d{6})/,'$1-$2');
+
+      // Returns array of {cls, text, step, delay_ms_from_prev}
+      // We'll accumulate absolute times
+      const lines = [];
+      let t = 0;
+      const add = (cls, text, gap, step) => { t += gap; lines.push({ cls, text, t, step: step || 0 }); };
+
+      add('pg-l-cmd',  `$ ${buildCmd()}`,                          0);
+      add('pg-l-dim',  '╔══ Automated Deployment Pipeline v1.0.0 ══╗', 80);
+      if (dryRun) add('pg-l-warn', '[WARN] [DEPLOY] DRY-RUN mode — no changes will be made', 60);
+      add('pg-l-dim',  '', 40);
+
+      // Step 1
+      add('pg-l-step', '━━━ Step 1: PRE-FLIGHT CHECKS ━━━', 100, 1);
+      add('pg-l-info', '[INFO] [PREFLIGHT] Checking disk space ≥ 2048MB', 220);
+      add('pg-l-ok',   '[OK]  [PREFLIGHT] Disk: 18.4GB free on /var', 280);
+      add('pg-l-info', '[INFO] [PREFLIGHT] Verifying git repo access', 200);
+      add('pg-l-ok',   `[OK]  [PREFLIGHT] Git repo accessible: ${pgEnv === 'dev' ? 'develop' : 'main'}`, 350);
+      add('pg-l-ok',   '[OK]  [PREFLIGHT] Database reachable: localhost:5432', 280);
+      add('pg-l-ok',   '[OK]  [PREFLIGHT] All pre-flight checks passed', 200);
+      add('pg-l-dim',  '', 60);
+
+      // Step 2
+      add('pg-l-step', '━━━ Step 2: BACKUP CURRENT ━━━', 80, 2);
+      add('pg-l-ok',   '[OK]  [BACKUP] Previous release recorded: 20260529-143021', 240);
+      add('pg-l-dim',  '', 60);
+
+      // Step 3
+      add('pg-l-step', '━━━ Step 3: PULL CODE ━━━', 80, 3);
+      add('pg-l-info', `[INFO] [PULL] Cloning branch: ${branch}`, 180);
+      add('pg-l-ok',   `[OK]  [PULL] Cloned commit: a3f92c1 (${branch})`, 600);
+      add('pg-l-info', `[INFO] [PULL] ${installMap[pgType]}`, 200);
+      add('pg-l-ok',   '[OK]  [PULL] Dependencies installed', 700);
+      if (buildMap[pgType]) {
+        add('pg-l-info', `[INFO] [PULL] ${buildMap[pgType]}`, 200);
+        add('pg-l-ok',   '[OK]  [PULL] Build complete', 500);
+      }
+      add('pg-l-ok',   `[OK]  [PULL] Release ready: ${did}`, 200);
+      add('pg-l-dim',  '', 60);
+
+      // Step 4 — tests
+      add('pg-l-step', '━━━ Step 4: RUN TESTS ━━━', 80, 4);
+      if (!noTests && pgEnv !== 'dev') {
+        const testCmd = pgType === 'nodejs' ? 'npm test' : pgType === 'python' ? 'python -m pytest' : pgType === 'php' ? 'phpunit' : null;
+        if (testCmd) add('pg-l-info', `[INFO] [TESTS] Running: ${testCmd} (timeout: 300s)`, 200);
+        add('pg-l-ok',   '[OK]  [TESTS] PASSED in 22s', 800);
+      } else {
+        add('pg-l-warn', `[WARN] [DEPLOY] Step 4: Tests skipped (${noTests ? '--skip-tests' : 'dev env'})`, 200);
+      }
+      add('pg-l-dim',  '', 60);
+
+      if (dryRun) {
+        add('pg-l-warn', '[WARN] [DEPLOY] DRY-RUN — stopping before any production change', 120);
+        add('pg-l-ok',   '[OK]  [DEPLOY] Dry-run complete', 200);
+        return lines;
+      }
+
+      // Step 5
+      add('pg-l-step', '━━━ Step 5: SWITCH VERSION ━━━', 80, 5);
+      add('pg-l-ok',   `[OK]  [SWITCH] /var/www/current → ${did}`, 300);
+      add('pg-l-dim',  '', 60);
+
+      // Step 6
+      add('pg-l-step', '━━━ Step 6: RESTART SERVICES ━━━', 80, 6);
+      add('pg-l-ok',   `[OK]  [RESTART] ${restartMap[pgServer]}`, 350);
+      add('pg-l-ok',   '[OK]  [RESTART] nginx config test passed', 200);
+      add('pg-l-ok',   '[OK]  [RESTART] nginx reloaded', 250);
+      add('pg-l-dim',  '', 60);
+
+      // Step 7
+      add('pg-l-step', '━━━ Step 7: VERIFY DEPLOYMENT ━━━', 80, 7);
+      add('pg-l-info', '[INFO] [VERIFY] Waiting 10s for app to start...', 200);
+      add('pg-l-ok',   '[OK]  [VERIFY] PASSED (HTTP 200) on attempt 1', 1200);
+      add('pg-l-dim',  '', 60);
+
+      // Step 8
+      add('pg-l-step', '━━━ Step 8: CLEANUP OLD RELEASES ━━━', 80, 8);
+      add('pg-l-ok',   '[OK]  [CLEANUP] Removed old release: 20260525-082201', 260);
+      add('pg-l-info', '[INFO] [CLEANUP] Keeping last 5 releases', 200);
+      add('pg-l-dim',  '', 60);
+
+      // Step 9
+      add('pg-l-step', '━━━ Step 9: NOTIFY ━━━', 80, 9);
+      add('pg-l-ok',   '[OK]  [NOTIFY] Slack notification sent (success)', 280);
+      add('pg-l-dim',  '', 60);
+
+      const dur = Math.round(t / 1000) + 7;
+      add('pg-l-ok', `[OK]  [DEPLOY] Deploy ${did} complete in ${dur}s`, 200);
+
+      return lines;
+    }
+
+    function buildRollbackLines() {
+      const lines = []; let t = 0;
+      const add = (cls, text, gap, step) => { t += gap; lines.push({ cls, text, t, step: step || 0 }); };
+
+      add('pg-l-cmd',  `$ ./deploy.sh ${pgEnv} --rollback`, 0);
+      add('pg-l-dim',  '╔══ Automated Deployment Pipeline v1.0.0 ══╗', 80);
+      add('pg-l-warn', '[INFO] [DEPLOY] Manual rollback requested', 120);
+      add('pg-l-dim',  '', 60);
+
+      add('pg-l-step', '━━━ ROLLBACK ━━━', 100, 2);
+      add('pg-l-warn', '[WARN] [ROLLBACK] Reason: manual', 200);
+      add('pg-l-warn', '[WARN] [ROLLBACK] Rolling back: 20260530-091500 → 20260529-143021', 250);
+      add('pg-l-ok',   '[OK]  [SWITCH]   /var/www/current → 20260529-143021', 300);
+      add('pg-l-dim',  '', 60);
+
+      add('pg-l-step', '━━━ RESTART SERVICES ━━━', 80, 6);
+      add('pg-l-ok',   `[OK]  [RESTART] ${restartMap[pgServer]}`, 350);
+      add('pg-l-ok',   '[OK]  [RESTART] nginx reloaded', 250);
+      add('pg-l-dim',  '', 60);
+
+      add('pg-l-step', '━━━ VERIFY ROLLBACK ━━━', 80, 7);
+      add('pg-l-info', '[INFO] [ROLLBACK] Health check: http://localhost:3000/health', 300);
+      add('pg-l-ok',   '[OK]  [ROLLBACK] HTTP 200 — rollback verified', 1100);
+      add('pg-l-dim',  '', 60);
+
+      add('pg-l-step', '━━━ NOTIFY ━━━', 80, 9);
+      add('pg-l-ok',   '[OK]  [NOTIFY] Slack: ⚠️ Rolled back to 20260529-143021', 280);
+      add('pg-l-dim',  '', 60);
+      add('pg-l-ok',   '[OK]  [ROLLBACK] Rollback complete — running 20260529-143021', 200);
+
+      return lines;
+    }
+
+    function runSimulation(lines, mode) {
+      if (pgRunning) return;
+      pgRunning = true;
+      clearTimers();
+
+      termBody.innerHTML = '';
+      progressWrap.style.display = 'block';
+      resetPips();
+      setStatus('running');
+      termTitle.textContent = `deploy.sh — ${pgEnv} (${mode})`;
+      runBtn.disabled = true;
+      rollbackBtn.disabled = true;
+
+      let currentStep = 0;
+      let finalOk = false;
+
+      lines.forEach(({ cls, text, t, step }) => {
+        if (step && step !== currentStep) {
+          const sid = setTimeout(() => { setPip(step, 'active'); }, t - 80);
+          animTimers.push(sid);
+          currentStep = step;
+        }
+        if (cls === 'pg-l-ok' && text.includes('[DEPLOY] Deploy') && text.includes('complete')) finalOk = true;
+        if (cls === 'pg-l-ok' && text.includes('[ROLLBACK] Rollback complete')) finalOk = true;
+        appendLine(cls, text, t);
+      });
+
+      // Final state
+      const totalT = lines[lines.length - 1].t + 400;
+      const doneId = setTimeout(() => {
+        pips.forEach(p => { if (!p.classList.contains('failed')) p.classList.add('done'); });
+        progressLbl.textContent = finalOk ? 'Complete ✓' : 'Done';
+        setStatus(finalOk ? 'success' : 'failure');
+        pgRunning = false;
+        runBtn.disabled = false;
+        rollbackBtn.disabled = false;
+      }, totalT);
+      animTimers.push(doneId);
+    }
+
+    runBtn.addEventListener('click', () => {
+      if (pgRunning) return;
+      runSimulation(buildDeployLines(), swDryRun.checked ? 'dry-run' : 'deploy');
+    });
+
+    rollbackBtn.addEventListener('click', () => {
+      if (pgRunning) return;
+      runSimulation(buildRollbackLines(), 'rollback');
+    });
+
+    // Initialise command preview
+    updateCmd();
+
+  })();
+  </script>
+</body>
+</html>
