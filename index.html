@@ -77,17 +77,41 @@
       <div class="hero-left">
         <div class="hero-eyebrow">
           <span class="hero-eyebrow-dot" aria-hidden="true"></span>
-          Production-Grade · Zero Downtime · Pure Bash
+          Production-Grade &nbsp;&middot;&nbsp; Zero Downtime &nbsp;&middot;&nbsp; Pure Bash
         </div>
         <h1 class="hero-title">
-          Automated<br>
+          <span class="hero-title-line1">Automated</span>
           <span class="hero-title-line2">Deployment Pipeline</span>
         </h1>
         <p class="hero-desc">
-          One command deploys your app: pulls code, runs tests, backs up, switches atomically,
-          restarts services, verifies health. If anything fails — auto-rolls back to the previous
-          release. Slack notified on every outcome.
+          One command deploys your app: pulls code, runs tests, backs up, switches
+          atomically, restarts services, verifies health. If anything fails &mdash;
+          auto-rolls back in under 30&thinsp;s. Slack notified on every outcome.
         </p>
+
+        <!-- Stat strip -->
+        <div class="hero-stats" aria-label="Pipeline statistics">
+          <div class="hero-stat">
+            <span class="hero-stat-value">9</span>
+            <span class="hero-stat-label">Pipeline Steps</span>
+          </div>
+          <div class="hero-stat-sep" aria-hidden="true"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-value">9/9</span>
+            <span class="hero-stat-label">Tests Passing</span>
+          </div>
+          <div class="hero-stat-sep" aria-hidden="true"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-value">0ms</span>
+            <span class="hero-stat-label">Switch Downtime</span>
+          </div>
+          <div class="hero-stat-sep" aria-hidden="true"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-value">4</span>
+            <span class="hero-stat-label">App Stacks</span>
+          </div>
+        </div>
+
         <div class="hero-ctas">
           <a class="cta-primary" href="https://github.com/samiulAsumel/auto-deploy-pipeline" target="_blank" rel="noopener noreferrer">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0112 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0022 12c0-5.52-4.48-10-10-10z"/></svg>
@@ -112,44 +136,54 @@
       <div class="hero-right">
         <div class="terminal-card" role="img" aria-label="Deployment terminal demo">
           <div class="terminal-bar">
-            <span class="dot dot-red"  aria-hidden="true"></span>
-            <span class="dot dot-yellow" aria-hidden="true"></span>
-            <span class="dot dot-green"  aria-hidden="true"></span>
-            <span class="terminal-title">deploy.sh — production</span>
+            <div class="dot-group" aria-hidden="true">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <span class="terminal-title">deploy.sh &mdash; production</span>
+            <span class="terminal-shell-badge" aria-hidden="true">bash</span>
           </div>
           <div class="terminal-body" aria-hidden="true">
-<span class="t-prompt">$ </span><span class="t-cmd">./deploy.sh production</span>
-<span class="t-dim">╔═══ Automated Deployment Pipeline v1.0.0 ═══╗</span>
-
-<span class="t-step">━━━ Step 1: PRE-FLIGHT CHECKS ━━━</span>
-<span class="t-ok">[OK]  [PREFLIGHT] Disk: 14GB free (need 2GB)</span>
-<span class="t-ok">[OK]  [PREFLIGHT] Git repo accessible</span>
-<span class="t-ok">[OK]  [PREFLIGHT] Database reachable: localhost:5432</span>
-
-<span class="t-step">━━━ Step 2: BACKUP CURRENT ━━━</span>
-<span class="t-ok">[OK]  [BACKUP] Previous: 20260529-143021</span>
-
-<span class="t-step">━━━ Step 3: PULL CODE ━━━</span>
-<span class="t-ok">[OK]  [PULL]  Cloned commit: a3f92c1 (main)</span>
-<span class="t-ok">[OK]  [PULL]  npm packages installed</span>
-<span class="t-ok">[OK]  [PULL]  Build complete</span>
-
-<span class="t-step">━━━ Step 4: RUN TESTS ━━━</span>
-<span class="t-ok">[OK]  [TESTS] PASSED in 18s</span>
-
-<span class="t-step">━━━ Step 5: SWITCH VERSION ━━━</span>
-<span class="t-ok">[OK]  [SWITCH] /var/www/current → 20260530-091500</span>
-
-<span class="t-step">━━━ Step 6: RESTART SERVICES ━━━</span>
-<span class="t-ok">[OK]  [RESTART] pm2 reloaded: myapp</span>
-<span class="t-ok">[OK]  [RESTART] nginx reloaded</span>
-
-<span class="t-step">━━━ Step 7: VERIFY DEPLOYMENT ━━━</span>
-<span class="t-ok">[OK]  [VERIFY] PASSED (HTTP 200) on attempt 1</span>
-
-<span class="t-step">━━━ Step 9: NOTIFY ━━━</span>
-<span class="t-ok">[OK]  [NOTIFY] Slack notification sent (success)</span>
-<span class="t-ok">[OK]  [DEPLOY] Deploy 20260530-091500 complete in 47s</span>
+<span class="t-line"><span class="t-prompt">$ </span><span class="t-cmd">sudo deploy production</span></span>
+<span class="t-blank"></span>
+<span class="t-line t-banner">╔══════════════════════════════════════════════╗</span>
+<span class="t-line t-banner">║  Automated Deployment Pipeline  —  v1.0.0    ║</span>
+<span class="t-line t-banner">║  RHEL 9 / Ubuntu  ·  Node.js · Python · PHP  ║</span>
+<span class="t-line t-banner">╚══════════════════════════════════════════════╝</span>
+<span class="t-blank"></span>
+<span class="t-line t-step">━━━ Step 1: PRE-FLIGHT CHECKS ━━━</span>
+<span class="t-line"><span class="t-ts">[09:15:01]</span> <span class="t-mod">[PRE]</span>    <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">Disk: </span><span class="t-val">18.4 GB</span><span class="t-ok"> free — need </span><span class="t-num">2048</span><span class="t-ok"> MB</span></span>
+<span class="t-line"><span class="t-ts">[09:15:01]</span> <span class="t-mod">[PRE]</span>    <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">Git remote reachable → branch </span><span class="t-val">main</span></span>
+<span class="t-line"><span class="t-ts">[09:15:02]</span> <span class="t-mod">[PRE]</span>    <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">DB reachable: </span><span class="t-val">localhost</span><span class="t-ok">:</span><span class="t-num">5432</span></span>
+<span class="t-blank"></span>
+<span class="t-line t-step">━━━ Step 2: BACKUP CURRENT ━━━</span>
+<span class="t-line"><span class="t-ts">[09:15:02]</span> <span class="t-mod">[BACKUP]</span> <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">Recorded: </span><span class="t-path">/var/www/releases/20260529-143021</span></span>
+<span class="t-blank"></span>
+<span class="t-line t-step">━━━ Step 3: PULL CODE ━━━</span>
+<span class="t-line"><span class="t-ts">[09:15:04]</span> <span class="t-mod">[PULL]</span>   <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">Cloned </span><span class="t-val">a3f92c1</span><span class="t-ok"> → </span><span class="t-path">releases/20260530-091500</span></span>
+<span class="t-line"><span class="t-ts">[09:15:04]</span> <span class="t-mod">[PULL]</span>   <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">Linked shared: </span><span class="t-val">.env  storage  uploads</span></span>
+<span class="t-line"><span class="t-ts">[09:15:09]</span> <span class="t-mod">[PULL]</span>   <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">npm ci — </span><span class="t-num">312</span><span class="t-ok"> packages in </span><span class="t-num">4.8</span><span class="t-ok">s</span></span>
+<span class="t-line"><span class="t-ts">[09:15:11]</span> <span class="t-mod">[PULL]</span>   <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">Build complete: </span><span class="t-val">npm run build</span></span>
+<span class="t-blank"></span>
+<span class="t-line t-step">━━━ Step 4: RUN TESTS ━━━</span>
+<span class="t-line"><span class="t-ts">[09:15:14]</span> <span class="t-mod">[TESTS]</span>  <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">PASSED — </span><span class="t-num">47</span><span class="t-ok"> tests in </span><span class="t-num">18</span><span class="t-ok">s</span></span>
+<span class="t-blank"></span>
+<span class="t-line t-step">━━━ Step 5: SWITCH VERSION ━━━</span>
+<span class="t-line"><span class="t-ts">[09:15:14]</span> <span class="t-mod">[SWITCH]</span> <span class="t-lvl-ok">[OK]</span>  <span class="t-path">/var/www/current</span><span class="t-ok"> → </span><span class="t-val">20260530-091500</span><span class="t-ok"> ⚡ atomic</span></span>
+<span class="t-blank"></span>
+<span class="t-line t-step">━━━ Step 6: RESTART SERVICES ━━━</span>
+<span class="t-line"><span class="t-ts">[09:15:15]</span> <span class="t-mod">[SVC]</span>    <span class="t-lvl-ok">[OK]</span>  <span class="t-val">pm2</span><span class="t-ok"> reload myapp — 0 downtime</span></span>
+<span class="t-line"><span class="t-ts">[09:15:15]</span> <span class="t-mod">[SVC]</span>    <span class="t-lvl-ok">[OK]</span>  <span class="t-val">nginx</span><span class="t-ok"> config test passed; reloaded</span></span>
+<span class="t-blank"></span>
+<span class="t-line t-step">━━━ Step 7: VERIFY DEPLOYMENT ━━━</span>
+<span class="t-line"><span class="t-ts">[09:15:25]</span> <span class="t-mod">[VERIFY]</span> <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">HTTP </span><span class="t-val">200</span><span class="t-ok"> — </span><span class="t-path">localhost:3000/health</span><span class="t-ok"> — attempt </span><span class="t-num">1</span></span>
+<span class="t-blank"></span>
+<span class="t-line t-step">━━━ Step 9: NOTIFY ━━━</span>
+<span class="t-line"><span class="t-ts">[09:15:25]</span> <span class="t-mod">[NOTIFY]</span> <span class="t-lvl-ok">[OK]</span>  <span class="t-ok">Slack </span><span class="t-val">✓ success</span><span class="t-ok"> sent</span></span>
+<span class="t-blank"></span>
+<span class="t-line t-success-final">[09:15:25] Deploy 20260530-091500 complete in 25s</span>
+<span class="t-line"><span class="t-cursor"></span></span>
           </div>
         </div>
       </div>

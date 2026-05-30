@@ -207,50 +207,134 @@ html::before {
   max-width: var(--max-w); margin: 0 auto;
   gap: 64px; position: relative;
 }
-/* Hero accent orb behind the terminal */
+
+/* Multi-layer ambient glow behind the terminal */
 #hero::after {
   content: '';
-  position: absolute; top: 20%; right: -80px;
-  width: 500px; height: 500px; z-index: -1; pointer-events: none;
-  background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%);
+  position: absolute; top: 10%; right: -120px;
+  width: 640px; height: 640px; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(circle at 40% 40%, rgba(59,130,246,0.13) 0%, transparent 55%),
+    radial-gradient(circle at 70% 70%, rgba(6,182,212,0.07) 0%, transparent 55%);
+  animation: hero-orb-drift 8s ease-in-out infinite alternate;
 }
+@keyframes hero-orb-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(20px, -20px) scale(1.06); }
+}
+
 .hero-left { flex: 1; min-width: 0; }
 .hero-right { flex: 1; min-width: 0; display: flex; justify-content: flex-end; }
 
+/* ── Hero eyebrow pill ── */
 .hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 11px; font-weight: 700; letter-spacing: .14em;
-  color: var(--blue); text-transform: uppercase; margin-bottom: 20px;
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .16em;
+  color: var(--blue-bright); text-transform: uppercase; margin-bottom: 22px;
+  background: var(--blue-soft);
+  border: 1px solid var(--blue-glow);
+  padding: 6px 14px; border-radius: 99px;
 }
-.hero-eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 10px var(--blue-glow); animation: pulse-dot 2s infinite; }
+.hero-eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 8px var(--blue), 0 0 16px var(--blue-glow);
+  animation: pulse-dot 2s infinite;
+}
 
+/* ── Hero title — full professional treatment ── */
 h1.hero-title {
-  font-size: clamp(2.6rem, 5vw, 4.4rem);
-  color: var(--text-bright); margin-bottom: 24px;
-  line-height: 1.03; letter-spacing: -.02em;
+  font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+  margin-bottom: 26px;
+  line-height: 1.0;
+  letter-spacing: -.03em;
+  position: relative;
 }
+
+/* "Automated" — bright white, strong weight, subtle shimmer on hover */
+.hero-title-line1 {
+  display: block;
+  color: var(--text-bright);
+  position: relative;
+}
+
+/* Underline accent under "Automated" */
+.hero-title-line1::after {
+  content: '';
+  display: block;
+  width: 56px; height: 3px;
+  margin-top: 6px; margin-bottom: 10px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  box-shadow: 0 0 12px var(--blue-glow);
+}
+
+/* "Deployment Pipeline" — full-width gradient, animated */
 .hero-title-line2 {
-  background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  display: block;
+  background: linear-gradient(
+    120deg,
+    var(--blue-bright) 0%,
+    var(--blue)        28%,
+    var(--cyan)        56%,
+    var(--blue-bright) 80%,
+    var(--cyan)        100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: title-shimmer 5s linear infinite;
+}
+@keyframes title-shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
 .hero-desc {
   font-size: 1.05rem; color: var(--text-secondary);
-  max-width: 500px; margin-bottom: 36px; line-height: 1.75;
+  max-width: 500px; margin-bottom: 38px; line-height: 1.78;
 }
 
-.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+/* ── Hero stat strip ── */
+.hero-stats {
+  display: flex; gap: 24px; margin-bottom: 36px; flex-wrap: wrap;
+}
+.hero-stat {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.hero-stat-value {
+  font-family: var(--font-display); font-size: 1.4rem; font-weight: 800;
+  color: var(--text-bright); letter-spacing: -.02em; line-height: 1;
+}
+.hero-stat-label {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  letter-spacing: .10em; color: var(--text-secondary); text-transform: uppercase;
+}
+.hero-stat-sep {
+  width: 1px; background: var(--border-mid); align-self: stretch; margin: 2px 0;
+}
+
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
 
 .cta-primary {
   display: inline-flex; align-items: center; gap: 8px;
-  background: var(--blue); color: #fff;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dim) 100%);
+  color: #fff;
   font-weight: 700; font-size: 14px;
-  padding: 13px 26px; border-radius: var(--radius-md);
-  transition: all .2s;
-  box-shadow: 0 0 24px var(--blue-glow), 0 4px 12px rgba(0,0,0,0.3);
+  padding: 13px 28px; border-radius: var(--radius-md);
+  transition: all .22s;
+  box-shadow: 0 0 28px var(--blue-glow), 0 4px 16px rgba(0,0,0,0.35);
+  position: relative; overflow: hidden;
 }
-.cta-primary:hover { background: var(--blue-dim); transform: translateY(-2px); box-shadow: 0 0 32px var(--blue-glow), 0 8px 24px rgba(0,0,0,0.4); }
+.cta-primary::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, transparent 60%);
+  opacity: 0; transition: opacity .22s;
+}
+.cta-primary:hover { transform: translateY(-2px); box-shadow: 0 0 42px var(--blue-glow), 0 10px 28px rgba(0,0,0,0.45); }
+.cta-primary:hover::before { opacity: 1; }
 
 .cta-secondary {
   display: inline-flex; align-items: center; gap: 8px;
@@ -268,35 +352,155 @@ h1.hero-title {
   padding: 4px 10px; border-radius: 20px;
   border: 1px solid var(--border-mid); color: var(--text-secondary);
   background: var(--bg-raised);
+  transition: border-color .18s, color .18s;
 }
+.badge:hover { border-color: var(--blue-glow); color: var(--blue-bright); }
 
 /* ── Terminal card ────────────────────────────────────────────────────────── */
 .terminal-card {
-  width: 100%; max-width: 520px;
+  width: 100%; max-width: 540px;
   background: var(--bg-card);
   border: 1px solid var(--border-mid);
   border-radius: var(--radius-lg); overflow: hidden;
-  box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px var(--border-dim), 0 0 60px rgba(59,130,246,0.06);
+  box-shadow:
+    0 40px 100px rgba(0,0,0,0.75),
+    0 0 0 1px var(--border-dim),
+    0 0 80px rgba(59,130,246,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  position: relative;
 }
+
+/* Faint top-glow rim on the card */
+.terminal-card::before {
+  content: '';
+  position: absolute; top: 0; left: 20%; right: 20%; height: 1px; z-index: 1;
+  background: linear-gradient(90deg, transparent, rgba(59,130,246,0.50), transparent);
+  pointer-events: none;
+}
+
+/* macOS-style title bar */
 .terminal-bar {
   display: flex; align-items: center; gap: 6px;
-  padding: 11px 16px; background: var(--bg-raised);
+  padding: 12px 16px;
+  background: linear-gradient(180deg, var(--bg-raised) 0%, rgba(10,17,32,0.9) 100%);
   border-bottom: 1px solid var(--border-dim);
+  position: relative;
 }
-.dot { width: 11px; height: 11px; border-radius: 50%; }
-.dot-red    { background: #FF5F57; }
-.dot-yellow { background: #FFBD2E; }
-.dot-green  { background: #27C93F; }
-.terminal-title { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
-.terminal-body { padding: 20px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.85; }
-.t-prompt { color: var(--text-muted); }
-.t-cmd    { color: var(--text-bright); }
-.t-ok     { color: var(--emerald); }
-.t-warn   { color: var(--orange); }
-.t-err    { color: var(--red); }
-.t-dim    { color: var(--text-muted); }
-.t-blue   { color: var(--blue-bright); }
-.t-step   { color: var(--cyan); font-weight: 600; }
+
+/* Traffic-light dot group */
+.dot-group {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+.dot { width: 11px; height: 11px; border-radius: 50%; position: relative; }
+.dot::after {
+  content: ''; position: absolute; inset: 1px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.35), transparent);
+}
+.dot-red    { background: #FF5F57; box-shadow: 0 0 6px rgba(255,95,87,0.5); }
+.dot-yellow { background: #FFBD2E; box-shadow: 0 0 6px rgba(255,189,46,0.4); }
+.dot-green  { background: #27C93F; box-shadow: 0 0 6px rgba(39,201,63,0.4); }
+
+/* Centred file title in bar */
+.terminal-title {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);
+  white-space: nowrap; pointer-events: none;
+}
+
+/* Shell badge on the right */
+.terminal-shell-badge {
+  margin-left: auto;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  letter-spacing: .08em; color: var(--text-muted);
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border-dim);
+  padding: 2px 8px; border-radius: 4px;
+}
+
+/* ── Terminal body — full professional output ── */
+.terminal-body {
+  padding: 18px 20px 22px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.9;
+  background: linear-gradient(180deg, #060C18 0%, #040810 100%);
+  overflow-x: auto;
+  position: relative;
+}
+
+/* Scanline texture */
+.terminal-body::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.07) 3px,
+    rgba(0,0,0,0.07) 4px
+  );
+}
+
+/* Every output line is a block */
+.t-line { display: block; white-space: pre; position: relative; z-index: 1; }
+
+/* Shell prompt + command */
+.t-prompt { color: #3A5880; }
+.t-cmd    { color: var(--text-bright); font-weight: 600; }
+
+/* Banner box */
+.t-banner { color: #1E3A5A; letter-spacing: .01em; }
+
+/* Blank gap */
+.t-blank { display: block; height: 4px; }
+
+/* Step header — cyan, weighted, with left-bar accent */
+.t-step {
+  color: var(--cyan);
+  font-weight: 700;
+  letter-spacing: .04em;
+  display: block;
+  margin-top: 10px;
+  padding-left: 2px;
+  position: relative; z-index: 1;
+}
+
+/* Timestamp token */
+.t-ts   { color: #243550; }
+/* Module token */
+.t-mod  { color: #2A4870; }
+/* Level tokens */
+.t-lvl-ok   { color: #14532D; }
+.t-lvl-info { color: #1E3A5A; }
+.t-lvl-warn { color: #78350F; }
+.t-lvl-err  { color: #7F1D1D; }
+
+/* Status icon + message */
+.t-ok   { color: #4ADE80; }
+.t-info { color: #4A78B4; }
+.t-warn { color: var(--orange); }
+.t-err  { color: var(--red); }
+.t-dim  { color: #1C2E48; }
+
+/* Highlight key values inside a line */
+.t-val  { color: #93C5FD; }
+.t-path { color: #67B7FD; font-style: normal; }
+.t-num  { color: #F0ABFC; }
+
+/* Final success line — stronger glow */
+.t-success-final {
+  color: #4ADE80;
+  text-shadow: 0 0 14px rgba(74,222,128,0.35);
+  font-weight: 600;
+}
+
+/* Cursor blink at end */
+.t-cursor {
+  display: inline-block; width: 7px; height: 13px;
+  background: #93C5FD; opacity: 0.85; vertical-align: middle;
+  animation: t-cursor-blink 1.1s step-start infinite;
+  margin-left: 2px; border-radius: 1px;
+}
+@keyframes t-cursor-blink { 0%,100%{opacity:.85} 50%{opacity:0} }
 
 /* ── Sections ─────────────────────────────────────────────────────────────── */
 section {
@@ -876,10 +1080,13 @@ footer a:hover { color: var(--blue-bright); }
   :root { --section-py: 72px; }
   section { padding-left: 20px; padding-right: 20px; }
   h1.hero-title { font-size: 2.4rem; }
+  .hero-stat-value { font-size: 1.2rem; }
+  .hero-stats { gap: 16px; }
   .section-title { font-size: 1.8rem; }
   .flow-grid { grid-template-columns: 1fr; }
   .feature-grid { grid-template-columns: 1fr; }
   .rb-protocols { grid-template-columns: 1fr; }
   .env-table { font-size: 12px; }
   .env-table td, .env-table th { padding: 10px 12px; }
+  .terminal-shell-badge { display: none; }
 }
